@@ -16,7 +16,6 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.fml.loading.FMLPaths;
-import win.demistorm.vr_swing_sprint.Platform;
 
 import java.io.File;
 import java.util.function.Consumer;

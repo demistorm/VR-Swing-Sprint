@@ -20,7 +20,7 @@
 			"win.demistorm.vr_swing_sprint.fabric.VRSwingSprintFabric"
 		],
 		"client": [
-			"win.demistorm.vr_swing_sprint.fabric.client.VRSwingSprintFabricClient"
+			"win.demistorm.vr_swing_sprint.fabric.client.FabricClient"
 		]
 	},
 	"depends": {

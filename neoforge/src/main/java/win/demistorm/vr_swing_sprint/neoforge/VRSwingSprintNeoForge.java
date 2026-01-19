@@ -1,12 +1,18 @@
 package win.demistorm.vr_swing_sprint.neoforge;
 
-import win.demistorm.vr_swing_sprint.VRSwingSprint;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.loading.FMLEnvironment;
+import win.demistorm.vr_swing_sprint.VRSwingSprint;
 
 @Mod(VRSwingSprint.MOD_ID)
 public final class VRSwingSprintNeoForge {
     public VRSwingSprintNeoForge() {
         // Run our common setup.
-        VRSwingSprint.init();
+        VRSwingSprint.initialize();
+
+        // Set up client side
+        if (FMLEnvironment.dist.isClient()) {
+            NeoClient.initialize();
+        }
     }
 }

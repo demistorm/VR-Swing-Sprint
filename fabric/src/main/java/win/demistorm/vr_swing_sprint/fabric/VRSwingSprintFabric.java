@@ -11,6 +11,6 @@ public final class VRSwingSprintFabric implements ModInitializer {
         // Proceed with mild caution.
 
         // Run our common setup.
-        VRSwingSprint.init();
+        VRSwingSprint.initialize();
     }
 }

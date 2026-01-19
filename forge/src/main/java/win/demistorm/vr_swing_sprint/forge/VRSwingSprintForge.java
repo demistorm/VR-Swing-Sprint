@@ -1,9 +1,7 @@
 package win.demistorm.vr_swing_sprint.forge;
 
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import win.demistorm.vr_swing_sprint.VRSwingSprint;
 
@@ -11,11 +9,8 @@ import win.demistorm.vr_swing_sprint.VRSwingSprint;
 @Mod("vr_swing_sprint")
 public class VRSwingSprintForge {
 
-    public VRSwingSprintForge(FMLJavaModLoadingContext context) {
+    public VRSwingSprintForge() {
         VRSwingSprint.LOGGER.info("VR Swing Sprint (FORGE) starting!");
-
-        // Get Forge event bus
-        IEventBus modEventBus = context.getModEventBus();
 
         // Make sure Vivecraft is installed
         try {
@@ -31,7 +26,7 @@ public class VRSwingSprintForge {
 
         // Set up client side
         if (FMLEnvironment.dist == Dist.CLIENT) {
-            ClientSetup.doClientSetup();
+            ForgeClient.initialize();
         }
 
         VRSwingSprint.LOGGER.info("VR Swing Sprint (FORGE) initialization complete!");
