@@ -53,9 +53,6 @@ dependencies {
     // Vivecraft runtime dependency - NeoForge version
     // This provides the actual VR functionality at runtime on NeoForge
     implementation "maven.modrinth:vivecraft:${rootProject.minecraft_version}-${rootProject.vivecraft_version}-neoforge"
-
-
-    // MixinExtras for advanced mixin features
 }
 
 // Process resources and expand version placeholders

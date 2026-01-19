@@ -15,6 +15,9 @@ Mod that allows Vivecraft players to run by swinging their arms like Blade and S
 Requires Vivecraft mod.
 '''
 
+[[mixins]]
+config = "vss.mixins.json"
+
 [[dependencies.vr_swing_sprint]]
 modId = "forge"
 mandatory = true

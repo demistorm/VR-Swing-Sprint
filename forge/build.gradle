@@ -44,17 +44,15 @@ dependencies {
     // Core Forge dependency
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
 
-    // Include the common module with all our shared VR logic
+    // Common module
     common(project(path: ":common", configuration: "namedElements")) { transitive false }
     shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
 
-    // Vivecraft runtime dependency - Forge version
-    // This provides the actual VR functionality at runtime on Forge
+    // Vivecraft (Forge)
     modApi "maven.modrinth:vivecraft:${rootProject.minecraft_version}-${rootProject.vivecraft_version}-forge"
-
-
-    // MixinExtras for advanced mixin features
 }
+
+
 
 // Process resources and expand version placeholders
 processResources {

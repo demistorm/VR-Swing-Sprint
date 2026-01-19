@@ -15,6 +15,11 @@ loom {
     // if (aw.exists()) {
     //     accessWidenerPath.set(aw)
     // }
+
+    // Custom refmap name for mixin remapping
+    mixin {
+        defaultRefmapName.set("vss.refmap.json")
+    }
 }
 
 repositories {
