@@ -4,8 +4,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.vivecraft.api.data.VRBodyPart;
-import org.vivecraft.api.client.VRClientAPI;
 import win.demistorm.vr_swing_sprint.VRSwingSprint;
 
 // Manages sprint state and activation
@@ -16,7 +14,7 @@ public class SprintHelper {
     // Tunables
     private static final int TIMEOUT_TICKS = 30;            // How long sprint lasts after last stroke (1.5 seconds)
     private static final int STROKE_TIMEOUT_TICKS = 60;     // How long before stroke tracking resets (3 seconds)
-    private static final float HAPTIC_STRENGTH = 0.1f;      // Haptic feedback intensity when sprint activates
+    // Haptic feedback intensity when sprint activates
 
     // State
     private static boolean isSprinting = false;             // Currently sprinting
@@ -93,10 +91,6 @@ public class SprintHelper {
                 player.displayClientMessage(Component.literal("Sprint activated"), true);
             }
         }
-
-        // Haptic feedback for satisfying feel
-        VRClientAPI.instance().triggerHapticPulse(VRBodyPart.MAIN_HAND, HAPTIC_STRENGTH);
-        VRClientAPI.instance().triggerHapticPulse(VRBodyPart.OFF_HAND, HAPTIC_STRENGTH);
     }
 
     // Deactivate sprinting state
