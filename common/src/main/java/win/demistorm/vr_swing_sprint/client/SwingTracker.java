@@ -55,7 +55,7 @@ public class SwingTracker implements Tracker {
 
         try {
             // Check main hand (if cooldown allows)
-            if (mainHandCooldown >= 8) {
+            if (mainHandCooldown >= 5) {
                 Vec3 mainHandMovement = history.netMovement(VRBodyPart.MAIN_HAND, LOOKBACK_TICKS, true);
                 if (mainHandMovement != null && mainHandMovement.z > POSITION_THRESHOLD) {
                     double mainHandSpeed = history.averageSpeed(VRBodyPart.MAIN_HAND, LOOKBACK_TICKS, true);
@@ -68,7 +68,7 @@ public class SwingTracker implements Tracker {
             }
 
             // Check off hand (if cooldown allows)
-            if (offHandCooldown >= 8) {
+            if (offHandCooldown >= 5) {
                 Vec3 offHandMovement = history.netMovement(VRBodyPart.OFF_HAND, LOOKBACK_TICKS, true);
                 if (offHandMovement != null && offHandMovement.z > POSITION_THRESHOLD) {
                     double offHandSpeed = history.averageSpeed(VRBodyPart.OFF_HAND, LOOKBACK_TICKS, true);

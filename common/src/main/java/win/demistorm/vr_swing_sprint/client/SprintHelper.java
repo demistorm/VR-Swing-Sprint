@@ -102,8 +102,6 @@ public class SprintHelper {
     // Deactivate sprinting state
     private static void deactivateSprint(LocalPlayer player) {
         isSprinting = false;
-        mainHandStroked = false;
-        offHandStroked = false;
         log.debug("[VR Swing Sprint] Sprint deactivated");
 
         // Disable sprinting
