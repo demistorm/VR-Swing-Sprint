@@ -6,6 +6,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.vivecraft.api.data.VRBodyPart;
 import org.vivecraft.api.client.VRClientAPI;
+import win.demistorm.vr_swing_sprint.VRSwingSprint;
 
 // Manages sprint state and activation logic
 public class SprintHelper {
@@ -83,12 +84,14 @@ public class SprintHelper {
     // Activate sprinting state
     private static void activateSprint(LocalPlayer player) {
         isSprinting = true;
-        log.info("[VR Swing Sprint] Sprint activated");
+        log.debug("[VR Swing Sprint] Sprint activated");
 
         // Enable sprinting
         if (player != null) {
             player.setSprinting(true);
-            player.displayClientMessage(Component.literal("Sprint activated"), true);
+            if (VRSwingSprint.debugMode) {
+                player.displayClientMessage(Component.literal("Sprint activated"), true);
+            }
         }
 
         // Haptic feedback for satisfying feel
@@ -101,12 +104,14 @@ public class SprintHelper {
         isSprinting = false;
         mainHandStroked = false;
         offHandStroked = false;
-        log.info("[VR Swing Sprint] Sprint deactivated");
+        log.debug("[VR Swing Sprint] Sprint deactivated");
 
         // Disable sprinting
         if (player != null) {
             player.setSprinting(false);
-            player.displayClientMessage(Component.literal("Sprint deactivated"), true);
+            if (VRSwingSprint.debugMode) {
+                player.displayClientMessage(Component.literal("Sprint deactivated"), true);
+            }
         }
     }
 
