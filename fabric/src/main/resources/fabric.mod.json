@@ -13,7 +13,7 @@
 		"sources": "https://github.com/demistorm/VR-Swing-Sprint"
 	},
 	"license": "GPL-3.0",
-	"icon": "assets/vr_swing_sprint/icon.png",
+	"icon": "vss-logo.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
@@ -35,5 +35,13 @@
 	],
 	"suggests": {
 		"modmenu": "*"
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.discord": "https://discord.gg/7uttzPbTGq",
+				"modmenu.kofi": "https://ko-fi.com/hstorm"
+			}
+		}
 	}
 }

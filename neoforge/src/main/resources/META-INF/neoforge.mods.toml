@@ -8,9 +8,14 @@ modId = "vr_swing_sprint"
 version = "${version}"
 displayName = "VR Swing Sprint"
 displayURL = "https://github.com/demistorm/VR-Swing-Sprint"
+logoFile = "vss-logo.png"
 authors = "Halfstorm"
 description = '''
 Mod that allows Vivecraft players to run by swinging their arms like Blade and Sorcery!
+
+Support me on Ko-Fi: https://ko-fi.com/hstorm
+
+Discord: https://discord.gg/7uttzPbTGq
 
 Requires Vivecraft mod.
 '''
