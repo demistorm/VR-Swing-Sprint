@@ -83,11 +83,12 @@ public class SprintHelper {
     // Activate sprinting state
     private static void activateSprint(LocalPlayer player) {
         isSprinting = true;
-        log.info("[VR Swing Sprint] Would-be sprint activated");
+        log.info("[VR Swing Sprint] Sprint activated");
 
-        // Send message to player
+        // Enable sprinting
         if (player != null) {
-            player.displayClientMessage(Component.literal("Would-be sprint activated"), true);
+            player.setSprinting(true);
+            player.displayClientMessage(Component.literal("Sprint activated"), true);
         }
 
         // Haptic feedback for satisfying feel
@@ -100,25 +101,21 @@ public class SprintHelper {
         isSprinting = false;
         mainHandStroked = false;
         offHandStroked = false;
-        log.info("[VR Swing Sprint] Would-be sprint deactivated");
+        log.info("[VR Swing Sprint] Sprint deactivated");
 
-        // Send message to player
+        // Disable sprinting
         if (player != null) {
-            player.displayClientMessage(Component.literal("Would-be sprint deactivated"), true);
+            player.setSprinting(false);
+            player.displayClientMessage(Component.literal("Sprint deactivated"), true);
         }
     }
 
-    // Reset all state (called when detection clearly fails or player stops VR)
+    // Reset all states (called when detection fails or player stops VR)
     public static void reset() {
         isSprinting = false;
         mainHandStroked = false;
         offHandStroked = false;
         timeoutCounter = 0;
         strokeTimeoutCounter = 0;
-    }
-
-    // Check if currently sprinting
-    public static boolean isSprinting() {
-        return isSprinting;
     }
 }

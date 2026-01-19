@@ -15,7 +15,7 @@ public class SwingTracker implements Tracker {
     private static final Logger log = LogManager.getLogger(SwingTracker.class);
 
     // Tunables
-    private static final double MIN_SWING_SPEED = 0.08;           // Min speed (blocks/tick) for arm movement
+    private static final double MIN_SWING_SPEED = 0.06;           // Min speed (blocks/tick) for arm movement
     private static final int LOOKBACK_TICKS = 5;                  // How many ticks to look back for movement
     // Min distance between hands (blocks)
     private static final double POSITION_THRESHOLD = 0.05;        // Min Z movement to count as forward/back
