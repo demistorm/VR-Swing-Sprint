@@ -17,17 +17,15 @@ architectury {
 archivesBaseName = rootProject.archives_base_name + "-forge"
 
 loom {
-    // Access widener - add if needed in the future
-    // def aw = project(":common").file("src/main/resources/vr-swing-sprint.accesswidener")
-    // if (aw.exists()) {
-    //     accessWidenerPath.set(aw)
-    // }
+    forge {
+        mixinConfig "vss.mixins.json"
+    }
 }
 
 configurations {
     // Common module configuration
     common
-    shadowCommon // Don't use shadow from the shadow plugin because we don't want IDEA to index this
+    shadowCommon // Don't use shadow from the shadow plugin because don't want IDEA to index this
 
     // Build configuration inheritance
     compileClasspath.extendsFrom common

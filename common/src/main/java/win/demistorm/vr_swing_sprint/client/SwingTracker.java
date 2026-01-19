@@ -15,14 +15,14 @@ public class SwingTracker implements Tracker {
     private static final Logger log = LogManager.getLogger(SwingTracker.class);
 
     // Tunables
-    private static final double MIN_SWING_SPEED = 0.06;           // Min speed (blocks/tick) for arm movement
-    private static final int LOOKBACK_TICKS = 5;                  // How many ticks to look back for movement
+    private static final double MIN_SWING_SPEED = 0.06;    // Min speed (blocks/tick) for arm movement
+    private static final int LOOKBACK_TICKS = 5;           // How many ticks to look back for movement
     // Min distance between hands (blocks)
-    private static final double POSITION_THRESHOLD = 0.05;        // Min Z movement to count as forward/back
+    private static final double POSITION_THRESHOLD = 0.05; // Min Z movement to count as forward/back
 
     // Tracking state (not persistent across sessions, which is fine)
-    private int mainHandCooldown = 0;                            // Cooldown for main hand strokes
-    private int offHandCooldown = 0;                             // Cooldown for off hand strokes
+    private int mainHandCooldown = 0;                      // Cooldown for main hand strokes
+    private int offHandCooldown = 0;                       // Cooldown for off hand strokes
 
     @Override
     public ProcessType processType() {
@@ -47,7 +47,7 @@ public class SwingTracker implements Tracker {
         mainHandCooldown++;
         offHandCooldown++;
 
-        // Get historical pose data for movement analysis
+        // Get historical pose data for movement checking
         VRPoseHistory history = VRAPI.instance().getHistoricalVRPoses(player);
         if (history == null) {
             return;
@@ -80,7 +80,7 @@ public class SwingTracker implements Tracker {
                 }
             }
         } catch (IndexOutOfBoundsException e) {
-            // Not enough pose history yet (common when first loading into world)
+            // Not enough pose history yet (usually when first loading into world)
         }
     }
 

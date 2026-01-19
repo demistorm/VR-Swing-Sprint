@@ -8,7 +8,7 @@ import org.vivecraft.api.data.VRBodyPart;
 import org.vivecraft.api.client.VRClientAPI;
 import win.demistorm.vr_swing_sprint.VRSwingSprint;
 
-// Manages sprint state and activation logic
+// Manages sprint state and activation
 public class SprintHelper {
 
     private static final Logger log = LogManager.getLogger(SprintHelper.class);

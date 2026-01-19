@@ -36,9 +36,7 @@ dependencies {
     // IMPORTANT: Do NOT use other Fabric classes in common code - only annotations!
     modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
 
-    // Vivecraft dependency - compileOnly for API access
-    // We use the Fabric JAR for API access since Vivecraft's API classes are identical across loaders
-    // The actual runtime JAR will be provided by each loader module
+    // Vivecraft dependency (compileOnly for API access)
     modCompileOnly "maven.modrinth:vivecraft:${rootProject.minecraft_version}-${rootProject.vivecraft_version}-fabric"
 
 }
