@@ -12,9 +12,8 @@ public class SprintHelper {
     private static final Logger log = LogManager.getLogger(SprintHelper.class);
 
     // Tunables
-    private static final int TIMEOUT_TICKS = 30;            // How long sprint lasts after last stroke (1.5 seconds)
+    private static final int TIMEOUT_TICKS = 25;            // How long sprint lasts after last stroke (1.25 seconds)
     private static final int STROKE_TIMEOUT_TICKS = 60;     // How long before stroke tracking resets (3 seconds)
-    // Haptic feedback intensity when sprint activates
 
     // State
     private static boolean isSprinting = false;             // Currently sprinting
