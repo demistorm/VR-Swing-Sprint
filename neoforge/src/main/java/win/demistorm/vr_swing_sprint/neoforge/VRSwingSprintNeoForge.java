@@ -11,7 +11,7 @@ public final class VRSwingSprintNeoForge {
         VRSwingSprint.initialize();
 
         // Set up client side
-        if (FMLEnvironment.dist.isClient()) {
+        if (FMLEnvironment.getDist().isClient()) {
             NeoClient.initialize();
         }
     }
