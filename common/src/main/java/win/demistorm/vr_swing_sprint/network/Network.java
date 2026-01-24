@@ -17,33 +17,24 @@ public class Network {
 
     // Register all packet types
     private static void registerPackets() {
-        // Server capability query (client asks server if mod is installed)
+        // Server query (client asks server if mod is installed)
         INSTANCE.register(ServerCapabilityQuery.class,
-            // Empty packet, no data to write
             (data, buf) -> {},
-            // Empty packet, no data to read
             (buf) -> new ServerCapabilityQuery(),
-            // Process query - server responds with capability
-            (data, player) -> NetworkHandlers.handleCapabilityQuery(player, data)
+            (data, player) -> NetworkHandlers.handleCapabilityQuery(player)
         );
 
-        // Server capability response (server confirms it has the mod)
+        // Server capability response (server confirms it has mod)
         INSTANCE.register(ServerCapabilityResponse.class,
-            // Write response
             (data, buf) -> buf.writeBoolean(data.supportsCustomSpeeds()),
-            // Read response
             (buf) -> new ServerCapabilityResponse(buf.readBoolean()),
-            // Process response - client side only
             (data, player) -> NetworkHandlers.handleCapabilityResponse(player, data)
         );
 
-        // Sprint speed packet (client sends calculated speed multiplier)
+        // Sprint speed packet (client sends speed multiplier)
         INSTANCE.register(SprintSpeedData.class,
-            // Write speed multiplier
             (data, buf) -> buf.writeFloat(data.speedMultiplier()),
-            // Read speed multiplier
             (buf) -> new SprintSpeedData(buf.readFloat()),
-            // Process speed update
             (data, player) -> NetworkHandlers.handleSprintSpeed(player, data)
         );
     }

@@ -6,12 +6,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.vivecraft.client_vr.provider.MCVR;
 import org.vivecraft.client_vr.settings.VRSettings;
 
-// Mixin to disable Vivecraft's autosprint so that this mod is the trigger
+// Mixin to disable Vivecraft's autosprint so that this mod can trigger sprint
 @Mixin(value = MCVR.class, remap = false)
 public class AutoSprintMixin {
 
-    // Intercepts reads to VRSettings.autoSprint and always returns false
-    // This prevents Vivecraft's autosprint from activating without modifying config files
+    /* Intercept reads to VRSettings.autoSprint and always returns false
+    This prevents Vivecraft's autosprint from activating without modifying config files
+     */
     @Redirect(
         method = "processBindings",
         at = @At(

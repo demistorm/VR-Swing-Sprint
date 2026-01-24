@@ -9,7 +9,7 @@ public class VRSwingSprintClient {
 
     private static final Logger log = LogManager.getLogger(VRSwingSprintClient.class);
 
-    // Set up client-side systems
+    // Set up clientside systems
     public static void initializeClient() {
         log.info("VR Swing Sprint (CLIENT) starting!");
         // Register VR tracker with Vivecraft
