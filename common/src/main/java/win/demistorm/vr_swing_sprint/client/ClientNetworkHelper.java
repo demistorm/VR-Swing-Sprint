@@ -6,7 +6,7 @@ import win.demistorm.vr_swing_sprint.network.Network;
 import win.demistorm.vr_swing_sprint.network.data.ServerCapabilityQuery;
 import win.demistorm.vr_swing_sprint.network.data.SprintSpeedData;
 
-// Forwards client network information to cross-platform Network system
+// Forwards client network information to Network system
 public final class ClientNetworkHelper {
     private static final Logger log = LogManager.getLogger(ClientNetworkHelper.class);
 
@@ -22,7 +22,7 @@ public final class ClientNetworkHelper {
     public static void sendSprintSpeed(float multiplier) {
         // Safety check: Don't send packets to vanilla servers!
         if (!SprintHelper.hasServerCapability()) {
-            log.debug("[VR Swing Sprint] Skipping speed packet - server doesn't have mod (multiplier: {})", multiplier);
+            log.debug("[VR Swing Sprint] Skipping speed packet (server doesn't have mod (multiplier: {}))", multiplier);
             return;
         }
 

@@ -12,9 +12,9 @@ public class SprintHelper {
     private static final Logger log = LogManager.getLogger(SprintHelper.class);
 
     // Tunables
-    private static final int TIMEOUT_TICKS = 25;            // How long sprint lasts after last stroke (1.25 seconds)
-    private static final int STROKE_TIMEOUT_TICKS = 60;     // How long before stroke tracking resets (3 seconds)
-    private static final int HANDSHAKE_TIMEOUT_TICKS = 100; // Server handshake timeout (5 seconds)
+    private static final int TIMEOUT_TICKS = 25;            // How long sprint lasts after last stroke
+    private static final int STROKE_TIMEOUT_TICKS = 60;     // How long before stroke tracking resets
+    private static final int HANDSHAKE_TIMEOUT_TICKS = 100; // Server handshake timeout
 
     // Server detection
     private static boolean serverHasMod = false;            // Server has VR Swing Sprint installed
@@ -59,7 +59,7 @@ public class SprintHelper {
         }
     }
 
-    // Start the server handshake (call when player joins world)
+    // Start the server handshake
     public static void startHandshake() {
         serverHasMod = false;
         handshakeTimeoutCounter = HANDSHAKE_TIMEOUT_TICKS;
@@ -70,10 +70,10 @@ public class SprintHelper {
     public static void onServerCapabilityConfirmed() {
         serverHasMod = true;
         handshakeTimeoutCounter = -1;
-        log.info("[VR Swing Sprint] Server has VR Swing Sprint - custom speed multiplier enabled!");
+        log.info("[VR Swing Sprint] Server has VR Swing Sprint, custom speed multiplier enabled!");
     }
 
-    // Check if handshake timed out (called every tick)
+    // Check if handshake timed out
     private static void checkHandshakeTimeout() {
         if (handshakeTimeoutCounter > 0) {
             handshakeTimeoutCounter--;
@@ -81,7 +81,7 @@ public class SprintHelper {
                 // Timeout (server doesn't have the mod)
                 serverHasMod = false;
                 handshakeTimeoutCounter = -1;
-                log.info("[VR Swing Sprint] Server capability handshake timed out - using vanilla sprint behavior");
+                log.info("[VR Swing Sprint] Server capability handshake timed out (using vanilla sprint behavior)");
             }
         }
     }
@@ -113,7 +113,7 @@ public class SprintHelper {
                 maxStrokeVelocity = 0.0;  // Reset velocity tracking
             }
         } else {
-            // Already sprinting, need both hands to stroke to reset timeout
+            // Already sprinting, needs both hands to stroke to reset timeout
             if (mainHandStroked && offHandStroked) {
                 timeoutCounter = TIMEOUT_TICKS;  // Reset sprint timeout
                 // Reset hand tracking for next cycle
@@ -164,7 +164,7 @@ public class SprintHelper {
             if (VRSwingSprint.debugMode) {
                 String speedMsg;
                 if (serverHasMod) {
-                    speedMsg = String.format(" (velocity: %.2f → +%d%% speed)",
+                    speedMsg = String.format(" (velocity: %.2f => +%d%% speed)",
                         initialVelocity, (int)(currentSpeedMultiplier * 100));
                 } else {
                     speedMsg = " (vanilla speed)";
@@ -188,7 +188,7 @@ public class SprintHelper {
             if (VRSwingSprint.debugMode) {
                 String speedMsg;
                 if (serverHasMod && currentSpeedMultiplier > 0) {
-                    speedMsg = String.format(" (was velocity: %.2f → +%d%% speed)",
+                    speedMsg = String.format(" (was velocity: %.2f => +%d%% speed)",
                         currentArmVelocity, (int)(currentSpeedMultiplier * 100));
                 } else {
                     speedMsg = "";
