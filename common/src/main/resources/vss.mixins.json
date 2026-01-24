@@ -3,9 +3,12 @@
   "minVersion": "0.8",
   "package": "win.demistorm.vr_swing_sprint.mixin",
   "compatibilityLevel": "JAVA_21",
-  "mixins": [],
+  "mixins": [
+    "PlayerMixin"
+  ],
   "client": [
-    "AutoSprintMixin"
+    "AutoSprintMixin",
+    "LocalPlayerMixin"
   ],
   "server": [],
   "injectors": {
