@@ -8,7 +8,6 @@ import org.apache.logging.log4j.Logger;
 import org.vivecraft.api.VRAPI;
 import win.demistorm.vr_swing_sprint.VRSwingSprint;
 import win.demistorm.vr_swing_sprint.client.SprintHelper;
-import win.demistorm.vr_swing_sprint.network.data.ServerCapabilityQuery;
 import win.demistorm.vr_swing_sprint.network.data.ServerCapabilityResponse;
 import win.demistorm.vr_swing_sprint.network.data.SprintSpeedData;
 
@@ -19,23 +18,23 @@ public final class NetworkHandlers {
 
     private NetworkHandlers() {}
 
-    // Client asked if server has VR Swing Sprint installed
-    public static void handleCapabilityQuery(Player player, ServerCapabilityQuery data) {
+    // Client asked if server has mod installed
+    public static void handleCapabilityQuery(Player player) {
         if (player == null || !player.isAlive()) return;
 
-        log.debug("[VR Swing Sprint] Received capability query from {}", player.getName().getString());
+        log.debug("[VR Swing Sprint] Received query from {}", player.getName().getString());
 
         // Server confirms it has the mod
         if (player instanceof ServerPlayer serverPlayer) {
             Network.INSTANCE.sendToPlayer(serverPlayer, new ServerCapabilityResponse(true));
 
             if (VRSwingSprint.debugMode) {
-                player.displayClientMessage(Component.literal("VR Swing Sprint: Server-side enabled!"), true);
+                player.displayClientMessage(Component.literal("VR Swing Sprint: Serverside enabled!"), true);
             }
         }
     }
 
-    // Server confirmed it has the mod (client-side only)
+    // Server confirmed it has the mod (clientside only)
     public static void handleCapabilityResponse(Player player, ServerCapabilityResponse data) {
         if (player == null) return;
 
@@ -49,11 +48,11 @@ public final class NetworkHandlers {
         }
     }
 
-    // Client sent calculated speed multiplier to server
+    // Client sent speed multiplier to server
     public static void handleSprintSpeed(Player player, SprintSpeedData data) {
         if (player == null || !player.isAlive()) return;
 
-        // Validate this is a VR player (prevent hacking)
+        // Validate this is a VR player
         try {
             if (!VRAPI.instance().isVRPlayer(player)) {
                 log.warn("[VR Swing Sprint] Non-VR player {} tried to send sprint speed packet!",
@@ -66,9 +65,9 @@ public final class NetworkHandlers {
             return;
         }
 
-        // Store the speed multiplier in player attachment
+        // Store the speed multiplier for player
         if (player instanceof ServerPlayer serverPlayer) {
-            PlayerSpeedAttachment.get(serverPlayer).setMultiplier(data.speedMultiplier());
+            PlayerSpeedStorage.setMultiplier(serverPlayer, data.speedMultiplier());
 
             if (VRSwingSprint.debugMode) {
                 log.debug("[VR Swing Sprint] Updated speed multiplier for {} to {}",
