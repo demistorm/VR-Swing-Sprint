@@ -10,16 +10,13 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-// Cross-platform networking system (based on VR Throwing Extensions pattern)
+// Platform networking system
 public class NetworkChannel {
 
     // All registered packet types
     private final List<PacketRegistrationData<?>> packets = new ArrayList<>();
 
     // Add a new packet type
-    // encoder: saves packet data to buffer
-    // decoder: loads packet data from buffer
-    // handler: runs when packet arrives
     public <T> void register(Class<T> clazz, BiConsumer<T, RegistryFriendlyByteBuf> encoder,
                              Function<RegistryFriendlyByteBuf, T> decoder, BiConsumer<T, Player> handler) {
         packets.add(new PacketRegistrationData<>(packets.size(), clazz, encoder, decoder, handler));
@@ -38,7 +35,6 @@ public class NetworkChannel {
     // Process incoming packet (called by platform code)
     @SuppressWarnings("unchecked")
     public <T> void handlePacket(Player player, RegistryFriendlyByteBuf buffer) {
-        // Get packet type from buffer
         int packetId = buffer.readInt();
 
         // Check if packet type exists
@@ -56,20 +52,17 @@ public class NetworkChannel {
             return; // Failed to read packet
         }
 
-        // Run packet handler
         data.handler.accept(message, player);
     }
 
     // Turn packet into buffer
     private <T> RegistryFriendlyByteBuf encode(T message) {
-        // Find packet registration
         PacketRegistrationData<T> data = getData(message);
 
-        // Make buffer (using deprecated constructor with suppression, still works)
-        @SuppressWarnings("deprecation")
+        // Make buffer
         RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(
             io.netty.buffer.Unpooled.buffer(),
-            null // RegistryAccess - will be set by platform code
+            null // RegistryAccess (will be set by platform code)
         );
 
         // Save packet type ID
@@ -95,10 +88,10 @@ public class NetworkChannel {
 
     // Info about a packet type
     public record PacketRegistrationData<T>(
-        int id,                              // Packet ID number
-        Class<T> clazz,                      // Packet class
-        BiConsumer<T, RegistryFriendlyByteBuf> encoder,  // Saves to buffer
-        Function<RegistryFriendlyByteBuf, T> decoder,     // Loads from buffer
-        BiConsumer<T, Player> handler               // Runs when received
+        int id,                                         // Packet ID number
+        Class<T> clazz,                                 // Packet class
+        BiConsumer<T, RegistryFriendlyByteBuf> encoder, // Saves to buffer
+        Function<RegistryFriendlyByteBuf, T> decoder,   // Loads from buffer
+        BiConsumer<T, Player> handler                   // Runs when received
     ) {}
 }

@@ -11,8 +11,6 @@ import org.vivecraft.api.client.Tracker;
 import org.vivecraft.api.data.VRBodyPart;
 import org.vivecraft.api.data.VRPose;
 import org.vivecraft.api.data.VRPoseHistory;
-import win.demistorm.vr_swing_sprint.client.ClientNetworkHelper;
-import win.demistorm.vr_swing_sprint.client.SprintHelper;
 
 // Detects arm swing motions and triggers sprinting
 public class SwingTracker implements Tracker {
@@ -26,30 +24,25 @@ public class SwingTracker implements Tracker {
     private static final double UPWARD_THRESHOLD = 0.03;   // Min Y (upward) movement to count as a stroke
 
     // Speed curve tunables (quadratic interpolation)
-    private static final double WEAK_VEL_THRESHOLD = 0.05;  // Velocity below this = min boost
+    private static final double WEAK_VEL_THRESHOLD = 0.05;   // Velocity below this = min boost
     private static final double STRONG_VEL_THRESHOLD = 0.25; // Velocity above this = max boost
-    private static final float MIN_BOOST = 0.15f;            // 15% speed boost at light jog
-    private static final float MAX_BOOST = 0.60f;            // 60% speed boost at full sprint
-
-    // Network sync tunables
-    private static final float SYNC_THRESHOLD = 0.03f;      // Send packet if multiplier changes by 5%
-    private static final int MIN_SYNC_INTERVAL = 10;        // Minimum ticks between packets (0.5 seconds)
+    private static final float MIN_BOOST = 0.15f;            // Speed boost at light jog
+    private static final float MAX_BOOST = 0.60f;            // Speed boost at full sprint
 
     // Speed smoothing tunables
-    private static final int SPEED_SAMPLE_INTERVAL = 20;    // Ticks between speed updates (1 second)
+    private static final int SPEED_SAMPLE_INTERVAL = 20;    // Ticks between speed updates
     private static final float SMOOTHING_FACTOR = 0.6f;     // Weight towards new speed (0.0-1.0, higher = more responsive)
 
     // Tracking state (not persistent across sessions, which is fine)
     private int mainHandCooldown = 0;                      // Cooldown for main hand strokes
     private int offHandCooldown = 0;                       // Cooldown for off hand strokes
-    private float lastSentMultiplier = 0.0f;               // Last speed multiplier sent to server
     private int syncCooldown = 0;                          // Cooldown for network sync
 
     // Speed sampling state
     private static int sampleTickCounter = 0;              // Ticks since last speed update
-    private static List<Float> speedSamples = new ArrayList<>(); // Collected speed samples for averaging
+    private static final List<Float> speedSamples = new ArrayList<>(); // Collected speed samples for averaging
     private static float lastSmoothedSpeed = 0.0f;         // Last sent smoothed speed
-    private static boolean initialSpeedSent = false;       // Track if we sent initial speed
+    private static boolean initialSpeedSent = false;       // Track if sent initial speed
 
     @Override
     public ProcessType processType() {
@@ -75,7 +68,7 @@ public class SwingTracker implements Tracker {
         offHandCooldown++;
         if (syncCooldown > 0) syncCooldown--;
 
-        // Get historical pose data for movement checking
+        // Get historical poses for movement checking
         VRPoseHistory history = VRAPI.instance().getHistoricalVRPoses(player);
         if (history == null) {
             return;
@@ -84,7 +77,7 @@ public class SwingTracker implements Tracker {
         try {
             // Check main hand (if cooldown allows)
             if (mainHandCooldown >= 5) {
-                Vec3 mainHandMovement = calculatePositiveMovement(history, VRBodyPart.MAIN_HAND, LOOKBACK_TICKS);
+                Vec3 mainHandMovement = calculatePositiveMovement(history, VRBodyPart.MAIN_HAND);
                 if (mainHandMovement != null
                     && mainHandMovement.z > POSITION_THRESHOLD
                     && mainHandMovement.y > UPWARD_THRESHOLD) {
@@ -99,7 +92,7 @@ public class SwingTracker implements Tracker {
 
             // Check off hand (if cooldown allows)
             if (offHandCooldown >= 5) {
-                Vec3 offHandMovement = calculatePositiveMovement(history, VRBodyPart.OFF_HAND, LOOKBACK_TICKS);
+                Vec3 offHandMovement = calculatePositiveMovement(history, VRBodyPart.OFF_HAND);
                 if (offHandMovement != null
                     && offHandMovement.z > POSITION_THRESHOLD
                     && offHandMovement.y > UPWARD_THRESHOLD) {
@@ -120,13 +113,13 @@ public class SwingTracker implements Tracker {
     }
 
     // Calculate positive-only forward and upward movement (ignores return/backward motion)
-    private Vec3 calculatePositiveMovement(VRPoseHistory history, VRBodyPart bodyPart, int ticks) {
+    private Vec3 calculatePositiveMovement(VRPoseHistory history, VRBodyPart bodyPart) {
         double totalForward = 0.0;
         double totalUpward = 0.0;
 
         try {
-            // Iterate through the pose history (using player-relative coordinates)
-            for (int i = 0; i < ticks; i++) {
+            // Iterate through the pose history (using player-relative positions)
+            for (int i = 0; i < SwingTracker.LOOKBACK_TICKS; i++) {
                 VRPose currentPose = history.getHistoricalData(i, true);
                 VRPose prevPose = history.getHistoricalData(i + 1, true);
 
@@ -134,7 +127,6 @@ public class SwingTracker implements Tracker {
                     return null;
                 }
 
-                // Get position based on body part
                 Vec3 currentPos = getPositionFromBodyPart(currentPose, bodyPart);
                 Vec3 prevPos = getPositionFromBodyPart(prevPose, bodyPart);
 
@@ -158,7 +150,7 @@ public class SwingTracker implements Tracker {
         return new Vec3(0, totalUpward, totalForward);
     }
 
-    // Helper to get position from body part (handles both hands)
+    // Get position from body part (handles both hands)
     private Vec3 getPositionFromBodyPart(VRPose pose, VRBodyPart bodyPart) {
         if (bodyPart == VRBodyPart.MAIN_HAND) {
             var hand = pose.getHand(net.minecraft.world.InteractionHand.MAIN_HAND);
@@ -172,14 +164,14 @@ public class SwingTracker implements Tracker {
 
     // Calculate and send speed multiplier to server
     private void updateSpeedMultiplier(LocalPlayer player) {
-        // Only calculate if actively sprinting and initial speed was sent
+        // Calculate if actively sprinting and initial speed was sent
         if (!SprintHelper.isSprintingActive() || !initialSpeedSent) {
             return;
         }
 
         // Only send if server has the mod
         if (!SprintHelper.hasServerCapability()) {
-            return; // Vanilla server - don't send custom speed packets
+            return; // Vanilla server (don't send custom speed packets)
         }
 
         // Get combined arm speed
@@ -191,7 +183,7 @@ public class SwingTracker implements Tracker {
             double offHandSpeed = 0.0;
 
             // Get main hand speed
-            Vec3 mainHandMovement = calculatePositiveMovement(history, VRBodyPart.MAIN_HAND, LOOKBACK_TICKS);
+            Vec3 mainHandMovement = calculatePositiveMovement(history, VRBodyPart.MAIN_HAND);
             if (mainHandMovement != null
                 && mainHandMovement.z > POSITION_THRESHOLD
                 && mainHandMovement.y > UPWARD_THRESHOLD) {
@@ -199,7 +191,7 @@ public class SwingTracker implements Tracker {
             }
 
             // Get off hand speed
-            Vec3 offHandMovement = calculatePositiveMovement(history, VRBodyPart.OFF_HAND, LOOKBACK_TICKS);
+            Vec3 offHandMovement = calculatePositiveMovement(history, VRBodyPart.OFF_HAND);
             if (offHandMovement != null
                 && offHandMovement.z > POSITION_THRESHOLD
                 && offHandMovement.y > UPWARD_THRESHOLD) {
@@ -209,10 +201,10 @@ public class SwingTracker implements Tracker {
             // Use the faster of the two hands for speed calculation
             double combinedSpeed = Math.max(mainHandSpeed, offHandSpeed);
 
-            // Calculate would-be speed multiplier from combined arm speed
+            // Calculate speed multiplier from combined arm speed
             float wouldBeMultiplier = calculateSpeedMultiplier(combinedSpeed);
 
-            // Add to samples (only if we actually got some movement)
+            // Add to samples (only if there is some movement)
             if (combinedSpeed > 0) {
                 speedSamples.add(wouldBeMultiplier);
             }
@@ -229,14 +221,14 @@ public class SwingTracker implements Tracker {
         }
     }
 
-    // Calculate speed multiplier from arm swing velocity (quadratic curve)
+    // Calculate speed multiplier from arm swing velocity
     private static float calculateSpeedMultiplier(double velocity) {
-        // Below weak threshold → always min boost
+        // Below weak threshold = always min boost
         if (velocity <= WEAK_VEL_THRESHOLD) {
             return MIN_BOOST;
         }
 
-        // Above strong threshold → always max boost
+        // Above strong threshold = always max boost
         if (velocity >= STRONG_VEL_THRESHOLD) {
             return MAX_BOOST;
         }
@@ -248,7 +240,7 @@ public class SwingTracker implements Tracker {
         return (float) (MIN_BOOST + t * (MAX_BOOST - MIN_BOOST));
     }
 
-    // Send initial speed when sprint starts (called by SprintHelper)
+    // Send initial speed when sprint starts
     public static void sendInitialSpeed(double velocity) {
         // Calculate initial speed multiplier from velocity
         float initialMultiplier = calculateSpeedMultiplier(velocity);
@@ -260,16 +252,16 @@ public class SwingTracker implements Tracker {
         lastSmoothedSpeed = initialMultiplier;
         initialSpeedSent = true;
 
-        // Update debug display
+        // Update debug
         SprintHelper.setCurrentSpeedInfo(initialMultiplier, velocity);
 
         log.debug("[VR Swing Sprint] Initial speed sent: {} (velocity: {})",
                 String.format("%.2f", initialMultiplier), String.format("%.3f", velocity));
     }
 
-    // Process collected speed samples and send smoothed update to server
+    // Process speed samples and send smoothed speed to server
     private static void processSpeedSamples() {
-        // Skip if no samples collected (player didn't swing during interval)
+        // Skip if no samples collected
         if (speedSamples.isEmpty()) {
             sampleTickCounter = 0;
             return;
@@ -283,7 +275,6 @@ public class SwingTracker implements Tracker {
         float averageSpeed = sum / speedSamples.size();
 
         // Apply smoothing between last sent speed and new average
-        // Formula: smoothed = old * (1-factor) + new * factor
         float smoothedSpeed = lastSmoothedSpeed * (1.0f - SMOOTHING_FACTOR) + averageSpeed * SMOOTHING_FACTOR;
 
         // Send to server
@@ -292,7 +283,7 @@ public class SwingTracker implements Tracker {
         // Update last smoothed speed
         lastSmoothedSpeed = smoothedSpeed;
 
-        // Update debug display (estimate velocity from multiplier)
+        // Update debug display
         double estimatedVelocity = (smoothedSpeed - MIN_BOOST) / (MAX_BOOST - MIN_BOOST)
                                    * (STRONG_VEL_THRESHOLD - WEAK_VEL_THRESHOLD) + WEAK_VEL_THRESHOLD;
         SprintHelper.setCurrentSpeedInfo(smoothedSpeed, estimatedVelocity);
