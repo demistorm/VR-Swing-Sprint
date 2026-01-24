@@ -20,7 +20,7 @@ public final class PlatformImpl implements Platform {
 
     @Override
     public void sendToServer(RegistryFriendlyByteBuf packet) {
-        // Wrap in BufferPacket and send (Fabric API)
+        // Wrap in BufferPacket and send
         packet.retain();
         try {
             ClientPlayNetworking.send(new BufferPacket(packet));
