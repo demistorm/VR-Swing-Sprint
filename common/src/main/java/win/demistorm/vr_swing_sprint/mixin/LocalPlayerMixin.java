@@ -1,32 +1,45 @@
 package win.demistorm.vr_swing_sprint.mixin;
 
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import win.demistorm.vr_swing_sprint.client.SprintHelper;
 
-// Mixin to allow sprinting in tight spaces for VR players on modded servers
+// Mixin to modify sprint behavior for VR players on servers with mod
 @Mixin(LocalPlayer.class)
-public class LocalPlayerMixin {
+public abstract class LocalPlayerMixin {
 
-    // Inject into shouldStopRunSprinting to allow sprinting even with minor collisions
-    // ONLY if server has VR Swing Sprint installed (prevents anti-cheat issues on vanilla servers)
+    // Invokers for private methods in LocalPlayer
+    @Invoker("hasEnoughFoodToSprint")
+    protected abstract boolean invokeHasEnoughFoodToSprint();
+
+    @Invoker("vehicleCanSprint")
+    protected abstract boolean invokeVehicleCanSprint(Entity vehicle);
+
+    // Inject into shouldStopRunSprinting to disable checks
     @Inject(
-        method = "shouldStopRunSprinting",
-        at = @At("HEAD"),
-        cancellable = true
+            method = "shouldStopRunSprinting",
+            at = @At("HEAD"),
+            cancellable = true
     )
-    private void allowSprintInTightSpaces(CallbackInfoReturnable<Boolean> cir) {
-        // Only modify sprint behavior if server confirmed it has our mod
+    private void modifySprintBehavior(CallbackInfoReturnable<Boolean> cir) {
+        // Only modify sprint behavior if server confirmed it has mod
         if (!SprintHelper.hasServerCapability()) {
-            // Vanilla server - use default behavior (may stop sprinting with collisions)
             return;
         }
 
-        // Server has mod - allow sprinting even with minor horizontal collisions
-        // This makes VR sprinting feel much more natural
-        cir.setReturnValue(false); // Don't stop sprinting
+        LocalPlayer player = (LocalPlayer)(Object)this;
+
+        // Only keep some checks (removes collision and blindness checks)
+        boolean shouldStop =
+                !this.invokeHasEnoughFoodToSprint() ||
+                        player.isPassenger() && !this.invokeVehicleCanSprint(player.getVehicle()) ||
+                        player.isInWater() && !player.isUnderWater();
+
+        cir.setReturnValue(shouldStop);
     }
 }
