@@ -28,7 +28,7 @@ public final class VRSwingSprintFabric implements ModInitializer {
         // Initialize platform networking
         win.demistorm.vr_swing_sprint.fabric.PlatformImpl.init();
 
-        // Run our common setup (includes Network.initialize())
+        // Run common setup
         VRSwingSprint.initialize();
     }
 }

@@ -15,12 +15,12 @@ public final class FabricClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        // Initialize client-side systems (tracker registration, etc.)
+        // Initialize clientside systems
         VRSwingSprintClient.initializeClient();
 
-        // Register client-side packet receiver
+        // Register clientside packet receiver
         ClientPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
-            // Packets from server to client (capability response, etc.)
+            // Packets from server to client
             payload.buffer().retain();
             context.client().execute(() -> {
                 try {
@@ -36,7 +36,6 @@ public final class FabricClient implements ClientModInitializer {
 
         // Trigger handshake when player joins a world
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
-            // Trigger handshake when player joins the world
             SprintHelper.startHandshake();
             ClientNetworkHelper.sendCapabilityQuery();
         });
