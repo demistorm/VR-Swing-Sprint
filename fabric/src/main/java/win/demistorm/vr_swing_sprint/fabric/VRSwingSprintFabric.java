@@ -1,16 +1,34 @@
 package win.demistorm.vr_swing_sprint.fabric;
 
-import win.demistorm.vr_swing_sprint.VRSwingSprint;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import win.demistorm.vr_swing_sprint.VRSwingSprint;
+import win.demistorm.vr_swing_sprint.network.Network;
 
 public final class VRSwingSprintFabric implements ModInitializer {
     @Override
     public void onInitialize() {
-        // This code runs as soon as Minecraft is in a mod-load-ready state.
-        // However, some things (like resources) may still be uninitialized.
-        // Proceed with mild caution.
+        // Register packet types with Fabric
+        PayloadTypeRegistry.playC2S().register(BufferPacket.ID, BufferPacket.CODEC);
+        PayloadTypeRegistry.playS2C().register(BufferPacket.ID, BufferPacket.CODEC);
 
-        // Run our common setup.
+        // Handle incoming packets from client
+        ServerPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
+            payload.buffer().retain();
+            context.server().execute(() -> {
+                try {
+                    Network.INSTANCE.handlePacket(context.player(), payload.buffer());
+                } finally {
+                    payload.buffer().release();
+                }
+            });
+        });
+
+        // Initialize platform networking
+        win.demistorm.vr_swing_sprint.fabric.PlatformImpl.init();
+
+        // Run our common setup (includes Network.initialize())
         VRSwingSprint.initialize();
     }
 }
