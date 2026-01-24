@@ -1,6 +1,5 @@
 package win.demistorm.vr_swing_sprint;
 
-import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,10 +19,5 @@ public final class VRSwingSprint {
     public static void initialize() {
         // Initialize networking system
         win.demistorm.vr_swing_sprint.network.Network.initialize();
-    }
-
-    // Helper method for creating resource locations (used by Fabric networking)
-    public static ResourceLocation id(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }
