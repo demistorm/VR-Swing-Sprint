@@ -3,10 +3,25 @@ Mod that allows Vivecraft players to run by swinging their arms like Blade and S
 
 ---
 
-Clientside only, VSS **does not need to be** installed on the server, only the client to work. 
+## Modes
+This mod has two modes: **Clientside-only** and **client and server**. 
 
-This mod works by overriding Vivecraft's default autosprint (when the forward direction is pushed all the way, it 
-activates sprint) and activating sprint instead by the player swinging their arms in a jogging/running motion. 
+#### Clientside-only
+This mode automatically activates when the mod is not found on the server. In this mode, VR players can simply 
+make a running motion to activate vanilla sprint (30% speed boost). This has no effect on non-VR players.
+
+#### Client and Server (preferred)
+This mode automatically activates when the mod *is* found on the server. This allows it to apply a **dynamic
+sprint speed** depending on the arm's speed ranging from 15% to 60% at an all out sprint. The dynamic sprint
+speed makes the effect helps to feel more natural and fun. 
+
+This also disables some of the vanilla sprint-cancel conditions, giving the VR player full control of their
+movement.
+
+---
+
+In both modes, this mod works by overriding Vivecraft's default autosprint (when the forward direction is pushed all the way, it 
+activates sprint) and activating sprint instead by the player swinging their arms in a jogging/running motion.
 
 ---
 
