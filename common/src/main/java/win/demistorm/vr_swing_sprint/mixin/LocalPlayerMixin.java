@@ -7,6 +7,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.vivecraft.api.VRAPI;
 import win.demistorm.vr_swing_sprint.client.SprintHelper;
 
 // Mixin to modify sprint behavior for VR players on servers with mod
@@ -33,6 +34,16 @@ public abstract class LocalPlayerMixin {
         }
 
         LocalPlayer player = (LocalPlayer)(Object)this;
+
+        // Only modify behavior for VR players
+        try {
+            if (!VRAPI.instance().isVRPlayer(player)) {
+                return;
+            }
+        } catch (Exception e) {
+            // Vivecraft API not available
+            return;
+        }
 
         // Only keep some checks (removes collision and blindness checks)
         boolean shouldStop =
