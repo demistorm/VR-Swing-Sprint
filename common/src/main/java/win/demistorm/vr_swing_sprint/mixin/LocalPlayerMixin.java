@@ -6,7 +6,6 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.vivecraft.api.VRAPI;
 import win.demistorm.vr_swing_sprint.client.SprintHelper;
 
@@ -14,14 +13,11 @@ import win.demistorm.vr_swing_sprint.client.SprintHelper;
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin {
 
-    // Invokers for private methods in LocalPlayer
+    // Invoker for private method in LocalPlayer
     @Invoker("hasEnoughFoodToStartSprinting")
     protected abstract boolean invokeHasEnoughFoodToStartSprinting();
 
-    @Invoker("isRidingCamel")
-    protected abstract boolean invokeIsRidingCamel();
-
-    // Inject into aiStep to modify inline sprint stopping
+    // Inject into aiStep to modify the non-swimming sprint stop logic
     @Inject(
             method = "aiStep",
             at = @At(
@@ -49,51 +45,19 @@ public abstract class LocalPlayerMixin {
             return;
         }
 
-        // Check if player is sprinting and not swimming
-        if (!player.isSprinting() || player.isSwimming()) {
+        // Skip if swimming
+        if (player.isSwimming()) {
             return;
         }
 
-        // Only keep food and water checks (removes collision and forward impulse checks)
-        boolean shouldStop = !this.invokeHasEnoughFoodToStartSprinting() ||
-                player.isInWater() && !player.isUnderWater();
+        // Remove forward impulse and collision checks for VR players
+        boolean shouldStop =
+            !this.invokeHasEnoughFoodToStartSprinting() ||
+            player.isInWater() && !player.isUnderWater();
 
         if (!shouldStop) {
             // Cancel the vanilla stop sprinting logic
             ci.cancel();
         }
-    }
-
-    // Inject into shouldStopSprinting to remove blindness and moving slowly checks
-    @Inject(
-            method = "shouldStopSprinting",
-            at = @At("HEAD"),
-            cancellable = true
-    )
-    private void modifyShouldStopSprinting(CallbackInfoReturnable<Boolean> cir) {
-        // Only modify sprint behavior if server confirmed it has mod
-        if (!SprintHelper.hasServerCapability()) {
-            return;
-        }
-
-        LocalPlayer player = (LocalPlayer)(Object)this;
-
-        // Only modify behavior for VR players
-        try {
-            if (!VRAPI.instance().isVRPlayer(player)) {
-                return;
-            }
-        } catch (Exception e) {
-            // Vivecraft API not available
-            return;
-        }
-
-        // Only keep some checks (removes blindness and moving slowly checks)
-        boolean shouldStop =
-                player.isFallFlying() ||
-                        player.isPassenger() && !this.invokeIsRidingCamel() ||
-                        player.isUsingItem() && !player.isPassenger() && !player.isUnderWater();
-
-        cir.setReturnValue(shouldStop);
     }
 }
