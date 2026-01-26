@@ -30,7 +30,7 @@ public class PlayerMixin {
 
         // Serverside only
         if (!(player instanceof ServerPlayer)) return;
-        if (player.level().isClientSide) return;
+        if (player.level().isClientSide()) return;
 
         // Only for VR players
         try {
