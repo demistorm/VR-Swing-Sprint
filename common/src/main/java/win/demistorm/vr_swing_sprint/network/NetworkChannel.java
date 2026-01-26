@@ -1,6 +1,6 @@
 package win.demistorm.vr_swing_sprint.network;
 
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import win.demistorm.vr_swing_sprint.PlatformHolder;
@@ -17,8 +17,8 @@ public class NetworkChannel {
     private final List<PacketRegistrationData<?>> packets = new ArrayList<>();
 
     // Add a new packet type
-    public <T> void register(Class<T> clazz, BiConsumer<T, RegistryFriendlyByteBuf> encoder,
-                             Function<RegistryFriendlyByteBuf, T> decoder, BiConsumer<T, Player> handler) {
+    public <T> void register(Class<T> clazz, BiConsumer<T, FriendlyByteBuf> encoder,
+                             Function<FriendlyByteBuf, T> decoder, BiConsumer<T, Player> handler) {
         packets.add(new PacketRegistrationData<>(packets.size(), clazz, encoder, decoder, handler));
     }
 
@@ -34,7 +34,7 @@ public class NetworkChannel {
 
     // Process incoming packet (called by platform code)
     @SuppressWarnings("unchecked")
-    public <T> void handlePacket(Player player, RegistryFriendlyByteBuf buffer) {
+    public <T> void handlePacket(Player player, FriendlyByteBuf buffer) {
         int packetId = buffer.readInt();
 
         // Check if packet type exists
@@ -56,13 +56,13 @@ public class NetworkChannel {
     }
 
     // Turn packet into buffer
-    private <T> RegistryFriendlyByteBuf encode(T message) {
+    private <T> FriendlyByteBuf encode(T message) {
         PacketRegistrationData<T> data = getData(message);
 
         // Make buffer
-        RegistryFriendlyByteBuf buffer = new RegistryFriendlyByteBuf(
-            io.netty.buffer.Unpooled.buffer(),
-            null // RegistryAccess (will be set by platform code)
+        FriendlyByteBuf buffer = new FriendlyByteBuf(
+            io.netty.buffer.Unpooled.buffer()
+                // RegistryAccess (will be set by platform code)
         );
 
         // Save packet type ID
@@ -90,8 +90,8 @@ public class NetworkChannel {
     public record PacketRegistrationData<T>(
         int id,                                         // Packet ID number
         Class<T> clazz,                                 // Packet class
-        BiConsumer<T, RegistryFriendlyByteBuf> encoder, // Saves to buffer
-        Function<RegistryFriendlyByteBuf, T> decoder,   // Loads from buffer
+        BiConsumer<T, FriendlyByteBuf> encoder, // Saves to buffer
+        Function<FriendlyByteBuf, T> decoder,   // Loads from buffer
         BiConsumer<T, Player> handler                   // Runs when received
     ) {}
 }

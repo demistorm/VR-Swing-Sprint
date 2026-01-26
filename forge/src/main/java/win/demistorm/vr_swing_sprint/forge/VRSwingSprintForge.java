@@ -1,25 +1,24 @@
 package win.demistorm.vr_swing_sprint.forge;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.ChannelBuilder;
-import net.minecraftforge.network.EventNetworkChannel;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.simple.SimpleChannel;
 import win.demistorm.vr_swing_sprint.VRSwingSprint;
-import win.demistorm.vr_swing_sprint.network.Network;
 
 // Forge mod entry point
 @Mod("vr_swing_sprint")
 public class VRSwingSprintForge {
 
-    public static final EventNetworkChannel NETWORK = ChannelBuilder
-            .named(ResourceLocation.fromNamespaceAndPath(VRSwingSprint.MOD_ID, "network"))
-            .acceptedVersions((status, version) -> true)
-            .optional()
-            .networkProtocolVersion(0)
-            .eventNetworkChannel();
+    @SuppressWarnings("removal")
+    public static final SimpleChannel NETWORK = NetworkRegistry.ChannelBuilder
+            .named(new ResourceLocation(VRSwingSprint.MOD_ID, "network"))
+            .networkProtocolVersion(() -> "1.0")
+            .serverAcceptedVersions("1.0"::equals)
+            .clientAcceptedVersions("1.0"::equals)
+            .simpleChannel();
 
     public VRSwingSprintForge() {
         VRSwingSprint.LOGGER.info("VR Swing Sprint (FORGE) starting!");
@@ -33,31 +32,17 @@ public class VRSwingSprintForge {
             throw new RuntimeException("Vivecraft is required for VR Swing Sprint");
         }
 
-        // Set up packet handling for bidirectional communication
-        NETWORK.addListener(event -> {
-            FriendlyByteBuf payload = event.getPayload();
-            if (payload == null) return;
-
-            if (event.getSource().isServerSide()) {
-                // Client to server packet
-                var sender = event.getSource().getSender();
-                if (sender != null) {
-                    PlatformImpl.handleClientPacket(payload, sender);
-                }
-            } else {
-                // Server to client packet
-                if (FMLEnvironment.dist == Dist.CLIENT) {
-                    ForgeClient.handleNetworkPacket(payload);
-                }
-            }
-            event.getSource().setPacketHandled(true);
-        });
-
-        // Initialize platform with registered channel
-        PlatformImpl.init(NETWORK);
+        // Initialize platform with network channel
+        PlatformImpl.init();
 
         // Run common setup
         VRSwingSprint.initialize();
+
+        // Register packet handler using 1.20.1 SimpleChannel pattern
+        NETWORK.registerMessage(0, BufferPacket.class,
+                BufferPacket::encode,
+                BufferPacket::decode,
+                BufferPacket::handle);
 
         // Set up client side
         if (FMLEnvironment.dist == Dist.CLIENT) {
