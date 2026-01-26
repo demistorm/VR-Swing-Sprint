@@ -20,19 +20,16 @@ public final class VRSwingSprintNeoForge {
         modEventBus.addListener((RegisterPayloadHandlersEvent event) -> {
             final PayloadRegistrar registrar = event.registrar(VRSwingSprint.MOD_ID).optional();
 
-            // Register bidirectional packet handler
-            registrar.playBidirectional(BufferPacket.TYPE, BufferPacket.STREAM_CODEC,
-                (packet, context) -> {
-                    if (context.flow().isClientbound()) {
-                        // Server to client packets
-                        if (FMLEnvironment.dist.isClient()) {
-                            NeoClient.handleNetworkPacket(packet.buffer());
-                        }
-                    } else {
-                        // Client to server packets
-                        handleServerPacket(packet.buffer(), context);
-                    }
-                });
+            // Register bidirectional packet with separate handlers for each direction
+            registrar.playBidirectional(
+                BufferPacket.TYPE,
+                BufferPacket.STREAM_CODEC,
+                // Handler for SERVERBOUND (packets received on SERVER from client)
+                (packet, context) -> handleServerPacket(packet.buffer(), context),
+                // Handler for CLIENTBOUND (packets received on CLIENT from server)
+                (packet, context) -> context.enqueueWork(() ->
+                    NeoClient.handleNetworkPacket(packet.buffer()))
+            );
 
             VRSwingSprint.LOGGER.info("Registered NeoForge network handlers");
         });
