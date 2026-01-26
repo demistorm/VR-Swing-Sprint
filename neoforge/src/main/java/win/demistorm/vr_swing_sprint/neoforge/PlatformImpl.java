@@ -2,6 +2,7 @@ package win.demistorm.vr_swing_sprint.neoforge;
 
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import win.demistorm.vr_swing_sprint.Platform;
 import win.demistorm.vr_swing_sprint.PlatformHolder;
@@ -21,7 +22,7 @@ public final class PlatformImpl implements Platform {
     @Override
     public void sendToServer(RegistryFriendlyByteBuf packet) {
         // Wrap in BufferPacket and send
-        PacketDistributor.sendToServer(new BufferPacket(packet));
+        ClientPacketDistributor.sendToServer(new BufferPacket(packet));
     }
 
     @Override
