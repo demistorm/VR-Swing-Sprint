@@ -3,14 +3,13 @@ package win.demistorm.vr_swing_sprint.fabric.client;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.minecraft.client.player.LocalPlayer;
-import win.demistorm.vr_swing_sprint.VRSwingSprint;
 import win.demistorm.vr_swing_sprint.client.SprintHelper;
 import win.demistorm.vr_swing_sprint.client.ClientNetworkHelper;
 import win.demistorm.vr_swing_sprint.client.VRSwingSprintClient;
 import win.demistorm.vr_swing_sprint.fabric.BufferPacket;
 import win.demistorm.vr_swing_sprint.network.Network;
 
+// Fabric client setup and networking
 public final class FabricClient implements ClientModInitializer {
 
     @Override
@@ -18,18 +17,16 @@ public final class FabricClient implements ClientModInitializer {
         // Initialize clientside systems
         VRSwingSprintClient.initializeClient();
 
-        // Register clientside packet receiver
-        ClientPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
-            // Packets from server to client
-            payload.buffer().retain();
-            context.client().execute(() -> {
+        // Register clientside packet receiver using 1.20.1 API
+        ClientPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (client, handler, buf, responseSender) -> {
+            buf.retain();
+            client.execute(() -> {
                 try {
-                    LocalPlayer player = context.client().player;
-                    if (player != null) {
-                        Network.INSTANCE.handlePacket(player, payload.buffer());
+                    if (client.player != null) {
+                        Network.INSTANCE.handlePacket(client.player, buf);
                     }
                 } finally {
-                    payload.buffer().release();
+                    buf.release();
                 }
             });
         });

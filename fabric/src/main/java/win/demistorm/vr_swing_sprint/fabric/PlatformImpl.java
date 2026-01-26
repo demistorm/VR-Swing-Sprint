@@ -2,7 +2,7 @@ package win.demistorm.vr_swing_sprint.fabric;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import win.demistorm.vr_swing_sprint.Platform;
 import win.demistorm.vr_swing_sprint.PlatformHolder;
@@ -19,24 +19,14 @@ public final class PlatformImpl implements Platform {
     }
 
     @Override
-    public void sendToServer(RegistryFriendlyByteBuf packet) {
+    public void sendToServer(FriendlyByteBuf packet) {
         // Wrap in BufferPacket and send
-        packet.retain();
-        try {
-            ClientPlayNetworking.send(new BufferPacket(packet));
-        } finally {
-            packet.release();
-        }
+        ClientPlayNetworking.send(BufferPacket.ID, packet);
     }
 
     @Override
-    public void sendToPlayer(ServerPlayer player, RegistryFriendlyByteBuf packet) {
+    public void sendToPlayer(ServerPlayer player, FriendlyByteBuf packet) {
         // Wrap in BufferPacket and send
-        packet.retain();
-        try {
-            ServerPlayNetworking.send(player, new BufferPacket(packet));
-        } finally {
-            packet.release();
-        }
+        ServerPlayNetworking.send(player, BufferPacket.ID, packet);
     }
 }

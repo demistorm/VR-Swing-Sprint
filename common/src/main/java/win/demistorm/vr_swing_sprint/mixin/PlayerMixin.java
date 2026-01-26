@@ -14,14 +14,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.vivecraft.api.VRAPI;
 import win.demistorm.vr_swing_sprint.network.PlayerSpeedStorage;
 
+import java.util.UUID;
+
 // Mixin to apply custom sprint speed multiplier serverside
 @Mixin(Player.class)
 public class PlayerMixin {
 
     // Unique ID for custom sprint speed modifier
     @Unique
+    private static final UUID SPRINTING_MODIFIER_UUID =
+        UUID.fromString("1f3e5d7a-9b2c-4f6a-8e3d-1a2b3c4d5e6f");
+
+    @Unique
     private static final ResourceLocation SPRINTING_MODIFIER_ID =
-        ResourceLocation.fromNamespaceAndPath("vr_swing_sprint", "custom_speed");
+        new ResourceLocation("vr_swing_sprint", "custom_speed");
 
     // Inject at start of aiStep to apply custom speed modifier
     @Inject(method = "aiStep", at = @At("HEAD"))
@@ -59,13 +65,14 @@ public class PlayerMixin {
         AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
         if (speedAttr != null) {
             // Remove old modifier if present
-            speedAttr.removeModifier(SPRINTING_MODIFIER_ID);
+            speedAttr.removeModifier(SPRINTING_MODIFIER_UUID);
 
             // Add custom modifier
             speedAttr.addTransientModifier(new AttributeModifier(
-                SPRINTING_MODIFIER_ID,
+                SPRINTING_MODIFIER_UUID,
+                SPRINTING_MODIFIER_ID.toString(),
                 customMultiplier,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+                AttributeModifier.Operation.MULTIPLY_TOTAL
             ));
         }
     }
