@@ -2,7 +2,6 @@ package win.demistorm.vr_swing_sprint.mixin;
 
 import net.minecraft.client.player.LocalPlayer;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -12,10 +11,6 @@ import win.demistorm.vr_swing_sprint.client.SprintHelper;
 // Mixin to modify sprint behavior for VR players on servers with mod
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin {
-
-    // Invoker for private method in LocalPlayer
-    @Invoker("hasEnoughFoodToStartSprinting")
-    protected abstract boolean invokeHasEnoughFoodToStartSprinting();
 
     // Inject into aiStep to modify the non-swimming sprint stop logic
     @Inject(
@@ -52,7 +47,7 @@ public abstract class LocalPlayerMixin {
 
         // Remove forward impulse and collision checks for VR players
         boolean shouldStop =
-            !this.invokeHasEnoughFoodToStartSprinting() ||
+            player.getFoodData().getFoodLevel() < 6 ||
             player.isInWater() && !player.isUnderWater();
 
         if (!shouldStop) {
