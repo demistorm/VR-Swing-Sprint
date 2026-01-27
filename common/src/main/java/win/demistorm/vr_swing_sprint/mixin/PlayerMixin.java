@@ -1,6 +1,6 @@
 package win.demistorm.vr_swing_sprint.mixin;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -20,8 +20,8 @@ public class PlayerMixin {
 
     // Unique ID for custom sprint speed modifier
     @Unique
-    private static final ResourceLocation SPRINTING_MODIFIER_ID =
-        ResourceLocation.fromNamespaceAndPath("vr_swing_sprint", "custom_speed");
+    private static final Identifier SPRINTING_MODIFIER_ID =
+        Identifier.fromNamespaceAndPath("vr_swing_sprint", "custom_speed");
 
     // Inject at start of aiStep to apply custom speed modifier
     @Inject(method = "aiStep", at = @At("HEAD"))

@@ -1,21 +1,20 @@
 package win.demistorm.vr_swing_sprint.forge;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import net.minecraftforge.network.ChannelBuilder;
 import net.minecraftforge.network.EventNetworkChannel;
 import win.demistorm.vr_swing_sprint.VRSwingSprint;
-import win.demistorm.vr_swing_sprint.network.Network;
 
 // Forge mod entry point
 @Mod("vr_swing_sprint")
 public class VRSwingSprintForge {
 
     public static final EventNetworkChannel NETWORK = ChannelBuilder
-            .named(ResourceLocation.fromNamespaceAndPath(VRSwingSprint.MOD_ID, "network"))
+            .named(Identifier.fromNamespaceAndPath(VRSwingSprint.MOD_ID, "network"))
             .acceptedVersions((status, version) -> true)
             .optional()
             .networkProtocolVersion(0)

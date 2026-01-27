@@ -1,7 +1,6 @@
 package win.demistorm.vr_swing_sprint.mixin;
 
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
@@ -15,11 +14,8 @@ import win.demistorm.vr_swing_sprint.client.SprintHelper;
 public abstract class LocalPlayerMixin {
 
     // Invokers for private methods in LocalPlayer
-    @Invoker("hasEnoughFoodToSprint")
-    protected abstract boolean invokeHasEnoughFoodToSprint();
-
-    @Invoker("vehicleCanSprint")
-    protected abstract boolean invokeVehicleCanSprint(Entity vehicle);
+    @Invoker("isSprintingPossible")
+    protected abstract boolean invokeIsSprintingPossible(boolean flying);
 
     // Inject into shouldStopRunSprinting to disable checks
     @Inject(
@@ -45,11 +41,9 @@ public abstract class LocalPlayerMixin {
             return;
         }
 
-        // Only keep some checks (removes collision and blindness checks)
-        boolean shouldStop =
-                !this.invokeHasEnoughFoodToSprint() ||
-                        player.isPassenger() && !this.invokeVehicleCanSprint(player.getVehicle()) ||
-                        player.isInWater() && !player.isUnderWater();
+        // Keep vanilla food/mobility/vehicle/water checks
+        // Remove forward impulse and horizontal collision checks for VR players
+        boolean shouldStop = !this.invokeIsSprintingPossible(player.getAbilities().flying);
 
         cir.setReturnValue(shouldStop);
     }

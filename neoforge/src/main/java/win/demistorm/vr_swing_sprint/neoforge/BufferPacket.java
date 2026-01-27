@@ -3,7 +3,7 @@ package win.demistorm.vr_swing_sprint.neoforge;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.jetbrains.annotations.NotNull;
 import win.demistorm.vr_swing_sprint.VRSwingSprint;
 
@@ -11,7 +11,7 @@ import win.demistorm.vr_swing_sprint.VRSwingSprint;
 public record BufferPacket(RegistryFriendlyByteBuf buffer) implements CustomPacketPayload {
 
     public static final CustomPacketPayload.Type<BufferPacket> TYPE =
-        new CustomPacketPayload.Type<>(ResourceLocation.fromNamespaceAndPath(VRSwingSprint.MOD_ID, "buffer_packet"));
+        new CustomPacketPayload.Type<>(Identifier.fromNamespaceAndPath(VRSwingSprint.MOD_ID, "buffer_packet"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, BufferPacket> STREAM_CODEC =
         CustomPacketPayload.codec(BufferPacket::write, BufferPacket::read);
