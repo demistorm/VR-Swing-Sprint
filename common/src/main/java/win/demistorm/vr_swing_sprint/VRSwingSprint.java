@@ -10,7 +10,7 @@ public final class VRSwingSprint {
     public static final Logger LOGGER = LogManager.getLogger(VRSwingSprint.class);
 
     // Debug mode switch
-    public static final boolean debugMode = true;
+    public static final boolean debugMode = false;
 
     static {
         Configurator.setLevel(MOD_ID, debugMode ? Level.DEBUG : Level.INFO);
