@@ -1,3 +1,6 @@
+### Version 1.1.1
+- Fixes NeoForge fallback on vanilla servers
+
 ### Version 1.1.0
 
 - When player is in VR, disabled some of vanilla's mechanisms to stop sprinting such as brushing 
