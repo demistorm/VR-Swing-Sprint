@@ -21,8 +21,13 @@ public final class PlatformImpl implements Platform {
 
     @Override
     public void sendToServer(RegistryFriendlyByteBuf packet) {
-        // Wrap in BufferPacket and send
-        ClientPacketDistributor.sendToServer(new BufferPacket(packet));
+        try {
+            // Wrap in BufferPacket and send
+            ClientPacketDistributor.sendToServer(new BufferPacket(packet));
+        } catch (UnsupportedOperationException e) {
+            // Mod not present on server
+            win.demistorm.vr_swing_sprint.VRSwingSprint.LOGGER.debug("Server doesn't have VR Swing Sprint, using client-only mode");
+        }
     }
 
     @Override
