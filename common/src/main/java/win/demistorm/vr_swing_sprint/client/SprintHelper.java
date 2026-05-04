@@ -15,6 +15,7 @@ public class SprintHelper {
     private static final int TIMEOUT_TICKS = 25;            // How long sprint lasts after last stroke
     private static final int STROKE_TIMEOUT_TICKS = 60;     // How long before stroke tracking resets
     private static final int HANDSHAKE_TIMEOUT_TICKS = 100; // Server handshake timeout
+    private static final double MIN_PLAYER_SPEED = 0.02;    // Min blocks per tick to activate sprint
 
     // Server detection
     private static boolean serverHasMod = false;            // Server has VR Swing Sprint installed
@@ -105,6 +106,12 @@ public class SprintHelper {
         if (!isSprinting) {
             // Need both hands to stroke before activating sprint
             if (mainHandStroked && offHandStroked) {
+                if (player.getDeltaMovement().horizontalDistance() < MIN_PLAYER_SPEED) {
+                    mainHandStroked = false;
+                    offHandStroked = false;
+                    maxStrokeVelocity = 0.0;
+                    return;
+                }
                 activateSprint(player, maxStrokeVelocity);
                 timeoutCounter = TIMEOUT_TICKS;  // Set initial timeout
                 // Reset hand tracking for maintaining sprint
@@ -130,6 +137,12 @@ public class SprintHelper {
         checkHandshakeTimeout();
 
         if (isSprinting) {
+            // Deactivate if player stops moving
+            if (player != null && player.getDeltaMovement().horizontalDistance() < MIN_PLAYER_SPEED) {
+                deactivateSprint(player);
+                return;
+            }
+
             timeoutCounter--;
 
             // Check if sprint should timeout
