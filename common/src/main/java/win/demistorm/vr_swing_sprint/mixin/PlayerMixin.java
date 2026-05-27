@@ -42,8 +42,14 @@ public class PlayerMixin {
             return;
         }
 
-        // Player must be sprinting
+        AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+        if (speedAttr == null) return;
+
+        // Clean up any stale modifier from a previous sprint
         if (!player.isSprinting()) {
+            if (speedAttr.getModifier(SPRINTING_MODIFIER_ID) != null) {
+                speedAttr.removeModifier(SPRINTING_MODIFIER_ID);
+            }
             return;
         }
 
@@ -55,18 +61,12 @@ public class PlayerMixin {
             return;
         }
 
-        // Apply custom speed modifier
-        AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
-        if (speedAttr != null) {
-            // Remove old modifier if present
-            speedAttr.removeModifier(SPRINTING_MODIFIER_ID);
-
-            // Add custom modifier
-            speedAttr.addTransientModifier(new AttributeModifier(
-                SPRINTING_MODIFIER_ID,
-                customMultiplier,
-                AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
-            ));
-        }
+        // Remove old modifier and apply updated one
+        speedAttr.removeModifier(SPRINTING_MODIFIER_ID);
+        speedAttr.addTransientModifier(new AttributeModifier(
+            SPRINTING_MODIFIER_ID,
+            customMultiplier,
+            AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL
+        ));
     }
 }
