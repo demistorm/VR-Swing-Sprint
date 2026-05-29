@@ -35,7 +35,7 @@ public class SwingTracker implements Tracker {
 
     // Tracking state (not persistent across sessions, which is fine)
     private int mainHandCooldown = 0;                      // Cooldown for main hand strokes
-    private int offHandCooldown = 0;                       // Cooldown for off hand strokes
+    private int offHandCooldown = 0;                       // Cooldown for offhand strokes
     private int syncCooldown = 0;                          // Cooldown for network sync
 
     // Speed sampling state
@@ -90,7 +90,7 @@ public class SwingTracker implements Tracker {
                 }
             }
 
-            // Check off hand (if cooldown allows)
+            // Check offhand (if cooldown allows)
             if (offHandCooldown >= 5) {
                 Vec3 offHandMovement = calculatePositiveMovement(history, VRBodyPart.OFF_HAND);
                 if (offHandMovement != null
@@ -190,7 +190,7 @@ public class SwingTracker implements Tracker {
                 mainHandSpeed = history.averageSpeed(VRBodyPart.MAIN_HAND, LOOKBACK_TICKS, true);
             }
 
-            // Get off hand speed
+            // Get offhand speed
             Vec3 offHandMovement = calculatePositiveMovement(history, VRBodyPart.OFF_HAND);
             if (offHandMovement != null
                 && offHandMovement.z > POSITION_THRESHOLD

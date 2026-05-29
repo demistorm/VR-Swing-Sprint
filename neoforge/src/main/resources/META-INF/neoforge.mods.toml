@@ -33,7 +33,7 @@ side = "BOTH"
 [[dependencies.vr_swing_sprint]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[${minecraft_version}]"
+versionRange = "[${minecraft_version},)"
 ordering = "NONE"
 side = "BOTH"
 

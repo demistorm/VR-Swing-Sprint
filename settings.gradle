@@ -1,15 +1,51 @@
+// Plugin management for multi-loader VR Swing Sprint project
+// This tells Gradle where to find the Architectury and Loom plugins needed for cross-loader builds
+
 pluginManagement {
     repositories {
-        maven { url "https://maven.fabricmc.net/" }
-        maven { url "https://maven.architectury.dev/" }
-        maven { url "https://files.minecraftforge.net/maven/" }
+        // Fabric Maven for Loom plugin
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+
+        // Architectury Maven for Architectury plugin
+        maven {
+            name = 'Architectury'
+            url = 'https://maven.architectury.dev/'
+        }
+
+        // Forge Maven for Forge/NeoForge plugins
+        maven {
+            name = 'Forge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+
+        // Standard Gradle repositories
         gradlePluginPortal()
     }
 }
 
-rootProject.name = 'vr_swing_sprint'
+// Define subprojects in our multi-loader setup
+// This creates the module structure: common/ plus enabled loader modules
+include("common")
 
-include 'common'
-include 'fabric'
-include 'forge'
-include 'neoforge'
+// Conditionally include loader subprojects based on enabled_platforms property
+// Read from gradle.properties (defaults to fabric,neoforge if not set)
+def enabledPlatformsString = settings.hasProperty('enabled_platforms')
+        ? settings['enabled_platforms']
+        : 'fabric,neoforge'
+def enabledPlatforms = enabledPlatformsString.split(',')
+
+if ('fabric' in enabledPlatforms) {
+    include 'fabric'
+}
+if ('forge' in enabledPlatforms) {
+    include 'forge'
+}
+if ('neoforge' in enabledPlatforms) {
+    include 'neoforge'
+}
+
+// Set the root project name (used for artifact naming)
+rootProject.name = 'vr_swing_sprint'

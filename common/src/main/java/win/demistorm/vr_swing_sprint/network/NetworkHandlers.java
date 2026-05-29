@@ -29,7 +29,7 @@ public final class NetworkHandlers {
             Network.INSTANCE.sendToPlayer(serverPlayer, new ServerCapabilityResponse(true));
 
             if (VRSwingSprint.debugMode) {
-                player.displayClientMessage(Component.literal("VR Swing Sprint: Serverside enabled!"), true);
+                player.sendOverlayMessage(Component.literal("VR Swing Sprint: Serverside enabled!"));
             }
         }
     }
@@ -43,7 +43,7 @@ public final class NetworkHandlers {
             SprintHelper.onServerCapabilityConfirmed();
 
             if (VRSwingSprint.debugMode) {
-                player.displayClientMessage(Component.literal("VR Swing Sprint: Custom speed multiplier enabled!"), true);
+                player.sendOverlayMessage(Component.literal("VR Swing Sprint: Custom speed multiplier enabled!"));
             }
         }
     }

@@ -55,7 +55,7 @@ public class SprintHelper {
             if (player != null) {
                 String speedMsg = String.format("Speed updated: velocity %.2f → +%d%% speed",
                     velocity, (int)(multiplier * 100));
-                player.displayClientMessage(Component.literal(speedMsg), false);
+                player.sendOverlayMessage(Component.literal(speedMsg));
             }
         }
     }
@@ -182,7 +182,7 @@ public class SprintHelper {
                 } else {
                     speedMsg = " (vanilla speed)";
                 }
-                player.displayClientMessage(Component.literal("Sprint activated" + speedMsg), false);
+                player.sendOverlayMessage(Component.literal("Sprint activated" + speedMsg));
             }
         }
     }
@@ -206,7 +206,7 @@ public class SprintHelper {
                 } else {
                     speedMsg = "";
                 }
-                player.displayClientMessage(Component.literal("Sprint deactivated" + speedMsg), false);
+                player.sendOverlayMessage(Component.literal("Sprint deactivated" + speedMsg));
             }
         }
     }

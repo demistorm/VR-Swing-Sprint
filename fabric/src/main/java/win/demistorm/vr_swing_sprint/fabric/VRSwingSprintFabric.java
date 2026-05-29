@@ -10,8 +10,8 @@ public final class VRSwingSprintFabric implements ModInitializer {
     @Override
     public void onInitialize() {
         // Register packet types with Fabric
-        PayloadTypeRegistry.playC2S().register(BufferPacket.ID, BufferPacket.CODEC);
-        PayloadTypeRegistry.playS2C().register(BufferPacket.ID, BufferPacket.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(BufferPacket.ID, BufferPacket.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(BufferPacket.ID, BufferPacket.CODEC);
 
         // Handle incoming packets from client
         ServerPlayNetworking.registerGlobalReceiver(BufferPacket.ID, (payload, context) -> {
