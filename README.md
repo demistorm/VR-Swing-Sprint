@@ -35,7 +35,7 @@ Vivecraft :) It helps with the feeling a bit and adds just a little bit of immer
 
 **Requires Vivecraft 1.3.3+ installed.**
 
-*Supported versions: 1.19.2, 1.20.1, 1.21.1, 1.21.4, 1.21.5, 1.21.8, 1.21.10, 1.21.11*
+*Supported versions: 1.19.2, 1.20.1, 1.21.1, 1.21.4, 1.21.5, 1.21.8, 1.21.10, 1.21.11, 26.1+*
 
 ---
 
