@@ -1,5 +1,6 @@
 ### Version 1.1.3
 - Prevents double pressing the joystick in a direction to start sprinting while in VR (should fix broken sprinting)
+- **26.1** support!
 
 ### Version 1.1.2
 - Adds a minimum movement check to prevent faulty sprint activations and ensure that sprint 
