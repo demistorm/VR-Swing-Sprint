@@ -4,7 +4,7 @@
 
 plugins {
     // Shadow plugin for bundling common module
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'com.gradleup.shadow' version '9.4.3'
 }
 
 // Configure Architectury for this Forge module
@@ -14,7 +14,9 @@ architectury {
 }
 
 // Set loader-specific archive name for better organization
-archivesBaseName = rootProject.archives_base_name + "-forge"
+base {
+    archivesName = rootProject.archives_base_name + "-forge"
+}
 
 loom {
     forge {
@@ -35,7 +37,7 @@ configurations {
 
 repositories {
     // Add repositories to publish here
-    maven { url "https://cursemaven.com" }
+    maven { url = "https://cursemaven.com" }
 }
 
 dependencies {
@@ -43,8 +45,8 @@ dependencies {
     forge "net.minecraftforge:forge:${rootProject.forge_version}"
 
     // Common module
-    common(project(path: ":common", configuration: "namedElements")) { transitive false }
-    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive false }
+    common(project(path: ":common", configuration: "namedElements")) { transitive = false }
+    shadowCommon(project(path: ":common", configuration: "transformProductionForge")) { transitive = false }
 
     // Vivecraft (Forge)
     modApi "maven.modrinth:vivecraft:${rootProject.minecraft_version}-${rootProject.vivecraft_version}-forge"
